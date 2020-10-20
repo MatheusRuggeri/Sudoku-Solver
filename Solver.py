@@ -2,13 +2,22 @@ import BOARD
 import time
 
 playing_board = BOARD.file
-playing_board[5][8] = 0
-playing_board[2][8] = 3
 
-def solve():
-    pass
+def solve(print_info):
+    for i in range(0,9):
+        for j in range(0,9):
+            if (playing_board[i][j] == 0):
+                for n in range(1,10):
+                    if print_info:
+                        print(n, end=" - ")
+                    playing_board[i][j] = n
+                    if valid_board(print_info) == False:
+                        playing_board[i][j] = 0
+                    else:
+                        break
 
 def sudoku_printer():
+    print("")
     for i in range(0,9):
         if (i % 3 == 0):
             print("| ----- | ----- | ----- |")
@@ -22,7 +31,7 @@ def sudoku_printer():
         print("|")
     print("| ----- | ----- | ----- |")
 
-def valid_board():
+def valid_board(print_info):
     # Check all the lines to find a repetition in Column
     for j in range(0,9):
         # Set the comparision value and loop through the matrix comparing them
@@ -32,7 +41,8 @@ def valid_board():
                 # Add the condition (in Python True = 1 and False = 0) 
                 repetition += (playing_board[i_compare][j] != 0 and playing_board[i_compare][j] == playing_board[i][j])
             if repetition > 1:
-                print("Invalid game, same number in column", end=" ")
+                if print_info:
+                    print("Invalid game, same number in column")
                 return False
             
     # Check all the columns to find a repetition in Lines
@@ -42,7 +52,8 @@ def valid_board():
             for j in range(0,9):
                 repetition += (playing_board[i][j_compare] != 0 and playing_board[i][j_compare] == playing_board[i][j])
             if repetition > 1:
-                print("Invalid game, same number in line", end=" ")
+                if print_info:
+                    print("Invalid game, same number in line")
                 return False
 
     # Check the small squares (box)
@@ -58,9 +69,13 @@ def valid_board():
                         for j in range(3*j_box,3*j_box+3):
                             repetition += (playing_board[i_compare][j_compare] != 0 and playing_board[i_compare][j_compare] == playing_board[i][j])
                     if repetition > 1:
-                        print("Invalid game, same number in box", end=" ")
-                        return False
+                        if print_info:
+                            print("Invalid game, same number in box")
+                        return False                    
+    if print_info:
+        print("Valid game")
     return True
 
 sudoku_printer()
-valid_board()
+solve(0)
+sudoku_printer()
