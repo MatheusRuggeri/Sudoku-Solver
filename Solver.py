@@ -1,9 +1,27 @@
 import BOARD
 import time
 
-playing_board = BOARD.file
+playing_board = BOARD.file3
 
-def solve(print_info):
+def smart_solve(print_info):
+    # Check for positions that accept just a single value
+    change_board = False
+    for i in range(0,9):
+        for j in range(0,9):
+            possible_values = []
+            if (playing_board[i][j] == 0):
+                for n in range(1,10):
+                    playing_board[i][j] = n
+                    if valid_board(print_info) == True:
+                        possible_values.append(n)
+                    playing_board[i][j] = 0
+                if len(possible_values) == 1:
+                    playing_board[i][j] = possible_values[0]
+                    change_board = True
+    return change_board
+            
+def brute_force_solve(print_info): 
+    change_board = False       
     for i in range(0,9):
         for j in range(0,9):
             if (playing_board[i][j] == 0):
@@ -14,7 +32,9 @@ def solve(print_info):
                     if valid_board(print_info) == False:
                         playing_board[i][j] = 0
                     else:
+                        change_board = True
                         break
+    return change_board
 
 def sudoku_printer():
     print("")
@@ -76,6 +96,16 @@ def valid_board(print_info):
         print("Valid game")
     return True
 
+# Print the first Sudoku board, with empty spaces
 sudoku_printer()
-solve(0)
+
+# Keep trying to use the Smart solver until it is not effective anymore
+while smart_solve(0):
+    pass
+
+# Then uses brute force to solve
+while brute_force_solve(0):
+    pass
+
+# Print the final result
 sudoku_printer()
