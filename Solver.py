@@ -1,7 +1,10 @@
 import BOARD
 import time
+import numpy as np
+import copy
 
-playing_board = BOARD.file3
+playing_board = copy.deepcopy(BOARD.file3)
+start_board = copy.deepcopy(BOARD.file3)
 
 def smart_solve(print_info):
     # Check for positions that accept just a single value
@@ -45,7 +48,10 @@ def sudoku_printer():
             if (j % 3 == 0):
                 print("| ", end="")
             if (playing_board[i][j] != 0):
-                print(playing_board[i][j], end=" ")
+                if (playing_board[i][j] == start_board[i][j]):
+                    print('\x1b[6;30;42m' + str(playing_board[i][j]) + '\x1b[0m', end=" ")
+                else:  
+                    print(playing_board[i][j], end=" ")
             else:
                 print(" ", end=" ")
         print("|")
@@ -95,6 +101,40 @@ def valid_board(print_info):
     if print_info:
         print("Valid game")
     return True
+
+
+def check_possibility(i0, j0, value):
+    for i in range(0,9):
+        if playing_board[i][j0] == value:
+            return False
+    for j in range(0,9):
+        if playing_board[i0][j] == value:
+            return False
+    
+    iSquare = ((i0//3)*3)+1
+    jSquare = ((j0//3)*3)+1
+    for i in range(iSquare-1,iSquare+2):
+        for j in range(jSquare-1,jSquare+2):
+            if playing_board[i][j] == value:
+                return False
+    return True
+
+def solve(recursive):
+    print(recursive)
+    sudoku_printer()
+    time.sleep(1)
+    for x in range(0,9):
+        for y in range(0,9):
+            if playing_board[x][y] == 0:
+                for value in range(1,10):
+                    if check_possibility(x, y, value):
+                        playing_board[x][y] = value
+                        solve(recursive+1)
+                        playing_board[x][y] = 0
+                    return
+
+solve(1)
+
 
 # Print the first Sudoku board, with empty spaces
 sudoku_printer()
